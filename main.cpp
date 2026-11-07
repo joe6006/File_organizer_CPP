@@ -6,17 +6,43 @@ struct File{
     //store title
     
     std::string title;
+    std::string description;
     bool completed =false;
 
 };
 //use refrence to refer to the vector in the main function instead of creating a copy
 void Add( std::vector <File>& Files){
         File newFiles;
+        
         std::cout<< "enter new File"<<std::endl;
         std::getline(std::cin,newFiles.title);
+        std::cout<< "Add a description";
+        std::getline(std::cin, newFiles.description);
         Files.push_back(newFiles);
 };  
+void Read(std::vector <File>& Files){
+    std::cout<< "select the file number you'd like to read"<<std::endl;
+    std::string input;
+    std::getline(std::cin, input);
+    int num;
+    try{
+            num =std::stoi(input);
+            std::cout<<num<<std::endl;
+        }
+        catch(const std::invalid_argument& e){
+            std::cerr << "Invalid input: Not a number. \n";
+            return;
 
+        }
+        catch(const std::out_of_range& e){
+            std::cerr << "overflow: number is too large for an int. \n";
+            return;
+        };
+    num--;
+    std::cout<<Files[num].title<<std::endl;
+    std::cout<<Files[num].description<<std::endl;
+
+}
 //edit the information in Files title
 void Edit( std::vector <File>& Files){
    
@@ -123,6 +149,8 @@ int main(){
 
         if(choice == "add"){                
                  Add(Files);
+            }else if(choice == "read"){
+                Read(Files);
             }else if(choice == "edit"){
                 Edit(Files);
             }else if(choice == "quit"){
