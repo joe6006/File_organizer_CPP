@@ -40,11 +40,12 @@ void Add(std::vector<File> &Files, std::vector<Folder> &Folders)
         std::string choice;
         std::getline(std::cin, choice);
 
-        if(Folders.empty()){
-            std::cout<<"no Folders available: the file will be place in the homescreen."<<std::endl;
+        if (Folders.empty())
+        {
+            std::cout << "no Folders available: the file will be place in the homescreen." << std::endl;
             Files.push_back(newFiles);
-
-        }else if (choice == "yes")
+        }
+        else if (choice == "yes")
         {
             std::cout << "select which folder by number" << std::endl;
             for (std::size_t i = 0; i < Folders.size(); ++i)
@@ -61,39 +62,88 @@ void Add(std::vector<File> &Files, std::vector<Folder> &Folders)
 
             Files.push_back(newFiles);
         }
-        
     }
 };
 
-
-
-void Read(std::vector<File> &Files)
+void Read(std::vector<File> &Files, std::vector<Folder> &Folders)
 {
-    std::cout << "select the file number you'd like to read" << std::endl;
-    std::string input;
-    std::getline(std::cin, input);
-    int num;
-    try
-    {
-        num = std::stoi(input);
-        std::cout << num << std::endl;
-    }
-    catch (const std::invalid_argument &e)
-    {
-        std::cerr << "Invalid input: Not a number. \n";
-        return;
-    }
-    catch (const std::out_of_range &e)
-    {
-        std::cerr << "overflow: number is too large for an int. \n";
-        return;
-    };
-    num--;
-    std::cout << "File Name: " << Files[num].title << std::endl;
-    std::cout << "Description: " << std::endl;
-    std::cout << Files[num].description << std::endl;
+    std::cout << "type 'folder' or 'file' to choose what to display" << std::endl;
+    std::string choice;
+    std::getline(std::cin, choice);
 
-    
+    if (choice == "file")
+    {
+        std::cout << "select the file number you'd like to read" << std::endl;
+        for (std::size_t i = 0; i < Files.size(); ++i)
+        {
+
+            std::cout << i + 1 << "." << Files[i].title << std::endl;
+        };
+        std::string input;
+        std::getline(std::cin, input);
+        int num;
+        try
+        {
+            num = std::stoi(input);
+            std::cout << num << std::endl;
+        }
+        catch (const std::invalid_argument &e)
+        {
+            std::cerr << "Invalid input: Not a number. \n";
+            return;
+        }
+        catch (const std::out_of_range &e)
+        {
+            std::cerr << "overflow: number is too large for an int. \n";
+            return;
+        };
+        num--;
+        std::cout << "File Name: " << Files[num].title << std::endl;
+        std::cout << "Description: " << std::endl;
+        std::cout << Files[num].description << std::endl;
+    }
+    else if (choice == "folder")
+    {
+        std::cout << "select the folder number you'd like to open" << std::endl;
+        for (std::size_t i = 0; i < Folders.size(); ++i)
+        {
+            std::cout << i + 1 << ". " << Folders[i].name << std::endl;
+        };
+        std::string input;
+        std::getline(std::cin, input);
+        int num;
+        try
+        {
+            num = std::stoi(input);
+        }
+        catch (const std::invalid_argument &e)
+        {
+            std::cerr << "Invalid input: Not a number. \n";
+            return;
+        }
+        catch (const std::out_of_range &e)
+        {
+            std::cerr << "overflow: number is too large for an int. \n";
+            return;
+        };
+        num--;
+        if (num >= 0 && num < Folders.size())
+        {
+            for (int i = 0; i < Folders[num].Files.size(); ++i)
+            {
+                std::cout << i + 1 << ". "
+                          << Folders[num].Files[i].title
+                          << std::endl;
+            }
+            std::cout << "select a file to read" << std::endl;
+            std::string input;
+            std::getline(std::cin, input);
+            int fileNum = std::stoi(input);
+            fileNum--;
+            std::cout << Folders[num].Files[fileNum].title << std::endl;
+            std::cout << Folders[num].Files[fileNum].description << std::endl;
+        }
+    }
 }
 // edit the information in Files title
 void Edit(std::vector<File> &Files)
@@ -183,16 +233,22 @@ int main()
     {
         std::cout << "\n";
 
-        for (std::size_t i = 0; i < Folders.size(); ++i)
+        if (!Folders.empty())
         {
-            std::cout << "- " << Folders[i].name << std::endl;
+            for (std::size_t i = 0; i < Folders.size(); ++i)
+            {
+                std::cout << "- " << Folders[i].name << std::endl;
+            }
         }
-
-        for (std::size_t i = 0; i < Files.size(); ++i)
+        else if (!Files.empty())
         {
 
-            std::cout << i + 1 << "." << Files[i].title << std::endl;
-        };
+            for (std::size_t i = 0; i < Files.size(); ++i)
+            {
+
+                std::cout << i + 1 << "." << Files[i].title << std::endl;
+            };
+        }
         std::cout << "\n";
         std::cout << "File system" << std::endl;
 
@@ -211,7 +267,7 @@ int main()
         }
         else if (choice == "read")
         {
-            Read(Files);
+            Read(Files, Folders);
         }
         else if (choice == "edit")
         {
