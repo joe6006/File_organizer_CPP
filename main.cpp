@@ -146,13 +146,8 @@ void Read(std::vector<File> &Files, std::vector<Folder> &Folders)
     }
 }
 // edit the information in Files title
-void Edit(std::vector<File> &Files)
+void Edit(std::vector<File> &Files, std::vector<Folder> &Folders)
 {
-
-    std::cout << "Select which File to edit. use #'s EX: 1, 2, 3..." << std::endl;
-    std::string input;
-    std::getline(std::cin, input);
-
     // using a try and catch to verify the input string is the correct size and type
     // this also catches any errors on input if there are
     // any extra characters
@@ -162,31 +157,87 @@ void Edit(std::vector<File> &Files)
     // this also means that when using "&" we can save space and make it slightly faster.
 
     // PSA:: intialize the int or whatever type outside the TRY or else it won't be global
-    int num;
 
-    try
-    {
-        num = std::stoi(input);
-        std::cout << num << std::endl;
+    std::cout << "type 'folder' or 'file' to choose what to display" << std::endl;
+    std::string choice;
+    std::getline(std::cin, choice);
+
+   if(choice != "folder" || choice != "file"){
+    bool valid = false;
+    while(valid){
+        std::cout<<"please type file or folder, input will repeat if not typed correctly"<<std::endl;
+        std::getline(std::cin, choice);
+        if(choice == "file" || choice == "folder"){
+            valid = true;
+        };
     }
-    catch (const std::invalid_argument &e)
+
+   }else if (choice == "file")
     {
-        std::cerr << "Invalid input: Not a number. \n";
-        return;
+         for (std::size_t i = 0; i < Files.size(); ++i)
+        {
+
+            std::cout << i + 1 << "." << Files[i].title << std::endl;
+        };
+        std::cout << "Select which File to edit. use #'s EX: 1, 2, 3..." << std::endl;
+        std::string input;
+        std::getline(std::cin, input);
+
+        int num;
+
+        try
+        {
+            num = std::stoi(input);
+            std::cout << num << std::endl;
+        }
+        catch (const std::invalid_argument &e)
+        {
+            std::cerr << "Invalid input: Not a number. \n";
+            return;
+        }
+        catch (const std::out_of_range &e)
+        {
+            std::cerr << "overflow: number is too large for an int. \n";
+            return;
+        };
+
+        num--;
+
+        std::cout << "current Files title:" << std::endl;
+        std::cout << Files[num].title << std::endl;
+        std::cout << "New title: " << std::endl;
+        std::getline(std::cin, Files[num].title);
+        std::cout << "Success" << std::endl;
+    } else if(choice=="folder"){
+       for (std::size_t i = 0; i < Folders.size(); ++i)
+        {
+            std::cout << i + 1 << ". " << Folders[i].name << std::endl;
+        };
+        std::string input;
+        std::getline(std::cin, input);
+        int num;
+        try
+        {
+            num = std::stoi(input);
+        }
+        catch (const std::invalid_argument &e)
+        {
+            std::cerr << "Invalid input: Not a number. \n";
+            return;
+        }
+        catch (const std::out_of_range &e)
+        {
+            std::cerr << "overflow: number is too large for an int. \n";
+            return;
+        };
+        num--;
+        std::cout << "current Folder title:" << std::endl;
+        std::cout << Folders[num].name<< std::endl;
+        std::cout << "New title: " << std::endl;
+        std::getline(std::cin, Folders[num].name);
+        std::cout << "Success!" << std::endl;
+
     }
-    catch (const std::out_of_range &e)
-    {
-        std::cerr << "overflow: number is too large for an int. \n";
-        return;
-    };
-
-    num--;
-
-    std::cout << "current Files title:" << std::endl;
-    std::cout << Files[num].title << std::endl;
-    std::cout << "New title: " << std::endl;
-    std::getline(std::cin, Files[num].title);
-    std::cout << "Success" << std::endl;
 };
 
 void Delete(std::vector<File> &Files)
@@ -271,7 +322,7 @@ int main()
         }
         else if (choice == "edit")
         {
-            Edit(Files);
+            Edit(Files, Folders);
         }
         else if (choice == "quit")
         {
